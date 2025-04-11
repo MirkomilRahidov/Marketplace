@@ -5,27 +5,31 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-# Create your views here.
 
 @login_required(login_url='login')
 def new_product(request):
     if request.method == "GET":
         form = NewProductForm()
-        return render(request, 'product_new.html', {'form':form})
+        return render(request, 'product_new.html', {'form': form})
+    
     elif request.method == "POST":
         form = NewProductForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            product = form.save(request)
-            productimages = []
-            for image in request.FILES.getlist("images"):
-                productimages.append(ProductImage(image=image, product=product))
-            ProductImage.objects.bulk_create(
-                productimages
-            )
+            product = form.save(request,commit=False)
+            product.author = request.user  
+            product.save()  
             
+            productimages = []
+            for image in request.FILES.getlist("images"): 
+                productimages.append(ProductImage(image=image, product=product))
+            
+            if productimages:  
+                ProductImage.objects.bulk_create(productimages) 
+
             messages.success(request, "Successfully Created!")    
-            return redirect('main:index')
-        return render(request, 'product_new.html', {'form':form})
+            return redirect('main:index') 
+        
+        return render(request, 'product_new.html', {'form': form})
     
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
