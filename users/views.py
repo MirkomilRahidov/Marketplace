@@ -6,6 +6,9 @@ from django.shortcuts import get_object_or_404
 from .models import CustomUser, Saved
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from products.models import Product
+from django.contrib.auth import logout
+from django.contrib import messages
+
 # Create your views here.
 
 
@@ -81,5 +84,8 @@ class RecentlyViewedView(View):
             q=request.GET.get('q', '')
             if q:
                 products = products.filter(title__icontains=q)
-        return render(request, "recently_viewed.html", {'products':products})    
-                        
+        return render(request, "recently_viewed.html", {'products':products})   
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Siz muvaffaqiyatli tizimdan chiqdingiz!')
+    return render(request,"index.html")                   

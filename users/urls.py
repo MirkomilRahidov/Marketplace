@@ -1,4 +1,4 @@
-from .views import SignupView, ProfileView, UpdateProfileView, AddRemoveSavedView, SavedView, RecentlyViewedView
+from .views import SignupView, ProfileView, UpdateProfileView, AddRemoveSavedView, SavedView, RecentlyViewedView,user_logout
 from django.urls import path
 
 app_name='users'
@@ -8,5 +8,6 @@ urlpatterns = [
     path('update', UpdateProfileView.as_view(), name='update'),
     path('addremovesaved/<int:product_id>', AddRemoveSavedView.as_view(), name='addremovesaved'),
     path('saveds', SavedView.as_view(), name='saveds'),
-    path('recently-viewed', RecentlyViewedView.as_view(), name='recently_viewed')
+    path('recently-viewed', RecentlyViewedView.as_view(), name='recently_viewed'),
+    path('logout', user_logout, name='logout')
 ]
